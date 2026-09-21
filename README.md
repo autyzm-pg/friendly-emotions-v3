@@ -1,78 +1,45 @@
-# Friendly Emotions 😊
+# Friendly Emotions
 
-**Friendly Emotions** (*Przyjazne Emocje*) is an Android educational app for children with developmental needs (e.g. autism spectrum disorder). It is a sibling of **Friendly Words** (*Przyjazne Słowa*): instead of teaching word–image associations, it teaches **emotion recognition**.
+The application is part of the [Friendly Apps](http://autyzm.eti.pg.gda.pl) project. This is a set of educational applications aimed at supporting behavioral therapy of children with autism.
 
-The child is shown photographs of people (or animals, emojis) expressing emotions and asked to tap the image that matches the emotion written on screen and spoken aloud. Therapists configure materials and learning steps in a separate settings entry point. Both ship in a single APK, share a local Room database, and need no network.
+**Friendly Emotions** (*Przyjazne Emocje*) teaches **emotion recognition**: the child is shown photographs of people, animals or emojis expressing an emotion and taps the image that matches the emotion named on the screen and spoken aloud.
 
----
+<img src="docs/assets/screenshot-child.png" alt="child app screenshots"/>
 
-## 🤖 AI-assisted development
+A separate **therapist app**, bundled in the same APK, lets therapists manage teaching materials (images grouped by emotion) and configure learning steps — difficulty, number of images shown, hints, reinforcement and test mode — without any manual file editing.
 
-This project is an experiment in building a production-minded Android app **with as much AI-assisted development as possible**. The workflow is documentation-first: establish a reliable knowledge base, specify the new product, plan implementation, then code phase by phase with AI — refining as needed.
+<img src="docs/assets/screenshot-therapist.png" alt="therapist app screenshots"/>
 
-### How the project was set up
+Both apps share a local Room database and run fully offline.
 
-1. **📚 Reference documentation (Friendly Words)**  
-   Friendly Words is a similar app from the same family, already built by other students. Its codebase was reverse-documented with AI into a structured knowledge base covering inventory, domain model, learning session flow, therapist configuration, data architecture, and architecture improvement analysis (`docs/reference/friendly-words/`).
+## Getting started
 
-2. **📝 Target documentation & specification (Friendly Emotions)**  
-   Using that knowledge base, AI-generated docs and a full functional specification for the new app were produced: domain model, architecture, project setup, ADRs, and the functional spec (`docs/target/`).
-
-3. **🗺️ Implementation roadmap**  
-   An implementation roadmap was generated from those specs (`docs/target/implementation-roadmap.md`), breaking the work into buildable, testable phases.
-
-4. **🛠️ Phase-by-phase implementation**  
-   Development follows that roadmap. Each AI coding session targets one phase; generated code is reviewed, and the plan or specs are refined when reality requires it.
-
-UI layouts come from Figma (used as the visual source of truth during implementation). Architecture decisions are captured in ADRs (`docs/target/adr/`).
-
----
-
-## 📱 App overview
-
-| Entry point | Audience | Role |
-|---|---|---|
-| **Child app** | Children in therapy | Learning / assessment game (emotion matching) |
-| **Therapist app** | Therapists | Manage materials and learning steps |
-
-**Key differences from Friendly Words:** fixed emotion catalog (happy, sad, surprised, angry, scared, bored), material hierarchy `Emotion → Folder → Image`, grammatical gender on images for Polish prompts, and bilingual Polish / English support.
-
----
-
-## ⚙️ Tech stack
-
-| Area | Choice |
-|---|---|
-| Language | Kotlin |
-| UI | Jetpack Compose, Material 3 |
-| Architecture | Clean Architecture, MVVM, feature modules |
-| DI | Hilt |
-| Persistence | Room (local only) |
-| Modules | `:app`, `:domain`, `:data`, `:feature:child`, `:feature:therapist`, `:core:ui` |
-
----
-
-## 📂 Documentation map
-
-| Path | Contents |
-|---|---|
-| [`docs/reference/friendly-words/`](docs/reference/friendly-words/) | Knowledge base from the sibling Friendly Words app |
-| [`docs/target/friendly-emotions-functional-specification.md`](docs/target/friendly-emotions-functional-specification.md) | Functional specification |
-| [`docs/target/target-domain.md`](docs/target/target-domain.md) | Domain model |
-| [`docs/target/target-architecture.md`](docs/target/target-architecture.md) | Architecture |
-| [`docs/target/project-setup-specification.md`](docs/target/project-setup-specification.md) | Project / toolchain setup |
-| [`docs/target/adr/`](docs/target/adr/) | Architecture Decision Records |
-| [`docs/target/implementation-roadmap.md`](docs/target/implementation-roadmap.md) | Phased implementation plan (source of day-to-day work) |
-
----
-
-## 🚀 Building
-
-Requires JDK 17 and Android Studio (or the Android SDK / Gradle toolchain).
+- **JDK**: 17
+- **Kotlin**: 2.1.20, **AGP**: 8.9.1, **Gradle**: 8.11.1
 
 ```bash
 ./gradlew assembleDebug
 ```
 
-The debug build installs two launcher icons: one for the child app and one for therapist settings.
+Installing the debug build adds two launcher icons: one for the child app, one for therapist settings.
 
+## Project structure
+
+Clean Architecture / MVVM with Jetpack Compose, Material 3, Hilt and Room, split across `:app`, `:domain`, `:data`, `:feature:child`, `:feature:therapist` and `:core:ui`.
+
+Full specs, domain model, ADRs and the implementation roadmap live in [`docs/target/`](docs/target/); reference documentation of the sibling Friendly Words app lives in [`docs/reference/friendly-words/`](docs/reference/friendly-words/).
+
+## Testing & code style
+
+```bash
+./gradlew test         # unit tests
+./gradlew ktlintCheck  # lint
+```
+
+## Authors
+
+Developed at the Gdańsk University of Technology as part of the [Friendly Apps](http://autyzm.eti.pg.gda.pl) initiative supporting autism therapy.
+
+## License
+
+Except as otherwise noted, this software is licensed under the [GNU General Public License, v3](https://www.gnu.org/licenses/gpl-3.0.txt).
