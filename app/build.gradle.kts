@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +9,22 @@ plugins {
     alias(libs.plugins.hilt.android)
 }
 
+val isGithubActions = System.getenv("GITHUB_ACTIONS") == "true"
+
+val keystoreProperties =
+    Properties().apply {
+        val keystorePropertiesFile = rootProject.file("keystore.properties")
+        if (keystorePropertiesFile.exists()) {
+            keystorePropertiesFile.inputStream().use { load(it) }
+        }
+    }
+
+fun signingProp(key: String): String? = if (isGithubActions) System.getenv(key) else keystoreProperties.getProperty(key)
+
+val majorCounter = System.getenv("MAJOR_COUNTER")?.toIntOrNull() ?: 1
+val minorCounter = System.getenv("MINOR_COUNTER")?.toIntOrNull() ?: 0
+val patchCounter = System.getenv("PATCH_COUNTER")?.toIntOrNull() ?: 0
+
 android {
     namespace = "pg.autyzm.friendlyemotions"
     compileSdk = 36
@@ -15,14 +33,30 @@ android {
         applicationId = "pg.autyzm.friendlyemotions"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode =
+            if (isGithubActions) {
+                System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+            } else {
+                maxOf(patchCounter, 1)
+            }
+        versionName = "$majorCounter.$minorCounter.$patchCounter"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            val path = signingProp("KEYSTORE_PATH")
+            storeFile = path?.let { file(it) }
+            storePassword = signingProp("KEYSTORE_PASSWORD")
+            keyAlias = signingProp("KEY_ALIAS")
+            keyPassword = signingProp("KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
